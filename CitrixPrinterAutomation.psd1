@@ -21,16 +21,16 @@ ModuleVersion = '0.0.1'
 GUID = 'c2f8ed0d-d34b-4322-9d25-2142349481ba'
 
 # Author of this module
-Author = 'schuchardt'
+Author = 'Cornelius Schuchardt'
 
 # Company or vendor of this module
-CompanyName = 'Unknown'
+CompanyName = 'SoftEd Systems GmbH'
 
 # Copyright statement for this module
-Copyright = '(c) schuchardt. All rights reserved.'
+Copyright = '(c) Cornelius Schuchardt. All rights reserved.'
 
 # Description of the functionality provided by this module
-# Description = ''
+Description = 'Provides cmdlets to automate Printer Assignment Policy Creation'
 
 # Minimum version of the PowerShell engine required by this module
 # PowerShellVersion = ''
@@ -51,7 +51,7 @@ Copyright = '(c) schuchardt. All rights reserved.'
 # ProcessorArchitecture = ''
 
 # Modules that must be imported into the global environment prior to importing this module
-# RequiredModules = @()
+RequiredModules = "Citrix.Common.GroupPolicy"
 
 # Assemblies that must be loaded prior to importing this module
 # RequiredAssemblies = @()
@@ -95,7 +95,7 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        # Tags = @()
+        Tags = @("Citrix","Printing","PowerShell")
 
         # A URL to the license for this module.
         # LicenseUri = ''
