@@ -78,40 +78,35 @@ function New-PrinterAssignmentPolicy {
             Get-PSDrive -PSProvider Citrix.Common.GroupPolicy\CitrixGroupPolicy | Remove-PSDrive
             return $false
         }
-        
-        $obj = ($ctxGpo | Get-CtxGroupPolicyConfiguration).PrinterAssignments.Assignments
+
+        $assignmentArr = Get-ChildItem -Path "Citrix.Common.GroupPolicy\CitrixGroupPolicy::$($ctxdrive.Name):\User\$PolicyName\Settings\ICA\Printing\PrinterAssignments\Assignments" -ErrorAction SilentlyContinue
+        if ($assignmentArr) {
+            $index = $assignmentArr.Length +1
+        }
+        else {
+            $index = 1
+        }
+
+        $printerData = get-content $InputFile | ConvertFrom-Json
+        foreach ($printerRule in $printerData) {
+            Write-Verbose "Adding policy for printer $($printerRule.PrinterName)"
+            New-Item -Path "Citrix.Common.GroupPolicy\CitrixGroupPolicy::$($ctxdrive.Name):\User\$PolicyName\Settings\ICA\Printing\PrinterAssignments\Assignments" -Name $index -Filter $printerRule.Filter -SessionPrinter "\\$($printerRule.PrintServer)\$($printerRule.PrinterName)"
+            $index++
+        }
+
         Get-PSDrive -PSProvider Citrix.Common.GroupPolicy\CitrixGroupPolicy | Remove-PSDrive
         return $obj
-
-        <#
-        $newPolicyPath = Join-Path -Path "$($ctxDrive):\User" -ChildPath $PolicyName
-        try {
-            New-Item $newPolicyPath -ErrorAction Stop
-            $ctxGpo = Get-CtxGroupPolicy -PolicyName $PolicyName -Type "User" -DriveName $ctxDrive.Name -ErrorAction SilentlyContinue
-            <#
-            $printerData = get-content $InputFile | ConvertFrom-Json
-            foreach ($printerRule in $printerData) {
-                Write-Verbose "Adding policy for printer $($printerRule.PrinterName)"
-                $currentAssignments = ($ctxGpo | Get-CtxGroupPolicyConfiguration).PrinterAssignments
-                $currentAssignments
-            }
-            
-        }
-        catch [System.Management.Automation.ActionPreferenceStopException]{
-            Write-Error "Could not create policy object or Printer Assignment Objects: $($error[0].Exception.Message)"
-            return $false
-        }
-        #>
     }
 }
-
+<#
 $newPolHash = @{
     #AdminAddress = "vcitrix201"
     InputFile = "C:\Code\CitrixPrinterAutomation\TestData\printer.json"
-    PolicyName = "DruckerTest2"
+    PolicyName = "DruckerTest"
     Verbose = $true
     Mode = "Append"
     CtxGpoModulePath = "C:\Program Files\Citrix\Telemetry Service\TelemetryModule\Citrix.GroupPolicy.Commands.psm1"
 }
 
 New-PrinterAssignmentPolicy @newPolHash
+#>
